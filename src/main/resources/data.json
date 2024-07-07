@@ -1,0 +1,99 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "category": "调压柜",
+        "name": "Point 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.35399643112183,
+          39.92987395323626
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "category": "调压柜",
+        "name": "Point 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.3551980607605,
+          39.92990613974444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "category": "我不是调压柜",
+        "name": "Point 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.35642114807129,
+          39.92910147703997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "category": "高压线",
+        "name": "Line 1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            116.353127395401,
+            39.92865086592547
+          ],
+          [
+            116.35405007530213,
+            39.928264627827325
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "category": "高压线",
+        "name": "Line 2"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            116.35468307662964,
+            39.927846203221
+          ],
+          [
+            116.35520878959656,
+            39.92755652464739
+          ],
+          [
+            116.35992947746277,
+            39.93219138182513
+          ],
+          [
+            116.36024275895184,
+            39.93711377298796
+          ],
+          [
+            116.35235922278811,
+            39.941705714821445
+          ]
+        ]
+      }
+    }
+  ]
+}

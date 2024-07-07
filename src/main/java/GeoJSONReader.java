@@ -5,7 +5,6 @@ import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
@@ -15,6 +14,8 @@ import org.locationtech.jts.geom.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,87 +24,21 @@ import java.util.Map;
 public class GeoJSONReader {
 
     public static void main(String[] a) throws Exception {
-        // 示例的geojson字符串
-        String json = "{\n" +
-                "  \"type\": \"FeatureCollection\",\n" +
-                "  \"features\": [\n" +
-                "    {\n" +
-                "      \"type\": \"Feature\",\n" +
-                "      \"properties\": {\n" +
-                "      \"category\":\"调压柜\",\n" +
-                "        \"name\": \"Point 1\"\n" +
-                "      },\n" +
-                "      \"geometry\": {\n" +
-                "        \"type\": \"Point\",\n" +
-                "        \"coordinates\": [116.35399643112183, 39.92987395323626]\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"type\": \"Feature\",\n" +
-                "      \"properties\": {\n" +
-                "      \"category\":\"调压柜\",\n" +
-                "        \"name\": \"Point 2\"\n" +
-                "      },\n" +
-                "      \"geometry\": {\n" +
-                "        \"type\": \"Point\",\n" +
-                "        \"coordinates\": [116.3551980607605, 39.92990613974444]\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"type\": \"Feature\",\n" +
-                "      \"properties\": {\n" +
-                "      \"category\":\"我不是调压柜\",\n" +
-                "        \"name\": \"Point 1\"\n" +
-                "      },\n" +
-                "      \"geometry\": {\n" +
-                "        \"type\": \"Point\",\n" +
-                "        \"coordinates\": [116.35642114807129, 39.92910147703997]\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"type\": \"Feature\",\n" +
-                "\n" +
-                "      \"properties\": {\n" +
-                "      \"category\":\"高压线\",\n" +
-                "        \"name\": \"Line 1\"\n" +
-                "      },\n" +
-                "      \"geometry\": {\n" +
-                "        \"type\": \"LineString\",\n" +
-                "        \"coordinates\": [\n" +
-                "          [116.353127395401, 39.92865086592547],\n" +
-                "          [116.35405007530213, 39.928264627827325]\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"type\": \"Feature\",\n" +
-                "      \"properties\": {\n" +
-                "      \"category\":\"高压线\",\n" +
-                "        \"name\": \"Line 2\"\n" +
-                "      },\n" +
-                "      \"geometry\": {\n" +
-                "        \"type\": \"LineString\",\n" +
-                "        \"coordinates\": [\n" +
-                "          [116.35468307662964, 39.927846203221],\n" +
-                "          [116.35520878959656, 39.92755652464739]\n" +
-                "          [116.35992947746277, 39.93219138182513]\n" +
-                "          [116.36024275895184, 39.93711377298796]\n" +
-                "          [116.35235922278811, 39.941705714821445]\n" +
-                "        ]\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}\n";
 
+        String jsonFilePath = "src/main/resources/data.json";
+
+        // 示例的geojson字符串
+        String json = new String(Files.readAllBytes(Paths.get(jsonFilePath)));
 
         // 指定GeometryJSON构造器，15位小数
         FeatureJSON fJson_15 = new FeatureJSON(new GeometryJSON(15));
 
         // 读取为FeatureCollection
-        FeatureCollection featureCollection = fJson_15.readFeatureCollection(json);
+        FeatureCollection<SimpleFeatureType,SimpleFeature> featureCollection =
+                fJson_15.readFeatureCollection(json);
 
         // 遍历FeatureCollection，打印每个Feature的信息
-        try (FeatureIterator iterator = featureCollection.features()) {
+        try (SimpleFeatureIterator iterator = (SimpleFeatureIterator) featureCollection.features()) {
             while (iterator.hasNext()) {
                 Feature feature = iterator.next();
                 GeometryAttributeImpl geom = (GeometryAttributeImpl) feature.getDefaultGeometryProperty();
