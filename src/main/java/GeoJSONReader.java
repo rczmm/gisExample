@@ -1,5 +1,6 @@
 //import org.geotools.api.feature.Feature;
 //import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -96,10 +97,10 @@ public class GeoJSONReader {
 
 
         // 指定GeometryJSON构造器，15位小数
-        FeatureJSON fjson_15 = new FeatureJSON(new GeometryJSON(15));
+        FeatureJSON fJson_15 = new FeatureJSON(new GeometryJSON(15));
 
         // 读取为FeatureCollection
-        FeatureCollection featureCollection = fjson_15.readFeatureCollection(json);
+        FeatureCollection featureCollection = fJson_15.readFeatureCollection(json);
 
         // 遍历FeatureCollection，打印每个Feature的信息
         try (FeatureIterator iterator = featureCollection.features()) {
@@ -172,30 +173,30 @@ public class GeoJSONReader {
 
         // 将FeatureCollection写回GeoJSON字符串
         OutputStream outputStream = new ByteArrayOutputStream();
-        fjson_15.writeFeatureCollection(featureCollection, outputStream);
+        fJson_15.writeFeatureCollection(featureCollection, outputStream);
 //        System.out.println(outputStream);
 
         // 获取SimpleFeatureType
         SimpleFeatureType simpleFeatureType = (SimpleFeatureType) featureCollection.getSchema();
         // 第1个问题。坐标顺序与实际坐标顺序不符合
         CoordinateReferenceSystem crs = simpleFeatureType.getCoordinateReferenceSystem();
-//        System.out.println(CRS.getAxisOrder(crs));  //输出：NORTH_EAST
+        System.out.println(CRS.getAxisOrder(crs));  //输出：NORTH_EAST
 
         //第2个问题。查看空间列名称
 //        System.out.println(simpleFeatureType.getGeometryDescriptor().getLocalName());  //输出：geometry
 
         //第3个问题。坐标精度丢失
         //第4个问题。默认无坐标系和空值输出
-        OutputStream ostream = new ByteArrayOutputStream();
-        fjson_15.writeFeatureCollection(featureCollection, ostream);
-//        System.out.println(ostream.toString());
+        OutputStream oStream = new ByteArrayOutputStream();
+        fJson_15.writeFeatureCollection(featureCollection, oStream);
+        System.out.println(oStream);
 
         // 第5个问题。坐标变换问题，由坐标顺序引发
         SimpleFeatureIterator iterator = (SimpleFeatureIterator) featureCollection.features();
         SimpleFeature simpleFeature = iterator.next();
         Geometry geom = (Geometry) simpleFeature.getDefaultGeometry();
         iterator.close();
-//        System.out.println(geom.getArea());  // 输出：4.043554020447081E7
+        System.out.println(geom.getArea());
     }
 
 }

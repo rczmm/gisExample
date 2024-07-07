@@ -112,7 +112,7 @@ public class GeoVisualization extends JPanel {
         GeoVisualization geoVisualization = new GeoVisualization(points, lines, polygon);
         frame.add(geoVisualization);
         frame.setSize(800, 600);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setVisible(true);
     }
 }
