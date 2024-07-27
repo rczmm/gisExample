@@ -97,7 +97,7 @@ public class GeoJSONReader {
         // 打印结果
         System.out.println("不同分类的点的数量:");
         pointCounts.forEach((category, count) -> System.out.println(category + ": " + count));
-        System.out.println("\n不同分类的线的长度:");
+        System.out.println("不同分类的线的长度:");
         lineLengths.forEach((category, length) -> System.out.println(category + ": " + length));
         // 打印交叉的线段
         System.out.println("区域内完整的线路信息:");

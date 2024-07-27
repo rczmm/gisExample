@@ -15,48 +15,73 @@ public class PipeCompletionCalculator {
                 {36.7783, -119.4179}, // 当前点位2
                 {35.0, -118.2}       // 当前点位3
         };
-        double totalLengthKm = haversineDistance(startLatitude, startLongitude, endLatitude, endLongitude); // 管段总长度，单位为千米
 
-        System.out.printf("管段的长度： %.2f km \n", totalLengthKm);
+        CompletionResult completionResult = calculateCompletionRate(startLatitude, startLongitude, endLatitude, endLongitude, currentPositions);
 
-        CompletionResult completionResult = calculateCompletionRate(startLatitude, startLongitude, endLatitude, endLongitude, currentPositions, totalLengthKm);
         // 打印结果
         System.out.printf("最终完成量: %.2f km, 最终完成率: %.2f%%\n", completionResult.completionAmountKm, completionResult.completionRate);
         System.out.println("完成的管段点位信息：");
         for (Segment segment : completionResult.completedSegments) {
-            System.out.println("点位纬度: " + segment.latitude + ", 点位经度: " + segment.longitude + ", 完成量: " + segment.completionAmountKm);
+            System.out.printf("点位纬度: %.6f, 点位经度: %.6f, 完成量: %.2f km\n",
+                    segment.latitude, segment.longitude, segment.completionAmountKm);
         }
+
     }
 
-    public static CompletionResult calculateCompletionRate(double startLat, double startLon, double endLat, double endLon, double[][] currentPositions, double totalLengthKm) {
+    public static CompletionResult calculateCompletionRate(double startLat, double startLon, double endLat, double endLon, double[][] currentPositions) {
+
         List<Segment> completedSegments = new ArrayList<>();
+
         double maxCompletionAmountKm = 0.0; // 记录最大完成量
         double maxCompletionRate = 0.0; // 记录最大完成率
+
+        // 计算管段的中点
+        double midLat = (startLat + endLat) / 2;
+        double midLon = (startLon + endLon) / 2;
+
+        // 计算管段的总长度
+        double totalLengthKm = haversineDistance(startLat, startLon, endLat, endLon);
+
+        System.out.printf("管段的长度： %.2f km \n", totalLengthKm);
 
         for (double[] currentPosition : currentPositions) {
             double currentLat = currentPosition[0];
             double currentLon = currentPosition[1];
 
-            // 计算当前点位到管段起点的距离
-            double distanceToCurrent = haversineDistance(startLat, startLon, currentLat, currentLon);
+            // 计算当前点位到管段中点的距离
+            double distanceToMid = haversineDistance(midLat, midLon, currentLat, currentLon);
 
-            // 根据距离计算完成量
-            double completionAmountKm = Math.min(distanceToCurrent, totalLengthKm);
-            double completionRate = (completionAmountKm / totalLengthKm) * 100;
+            // 根据当前点位与中点的距离来确定选择起点还是终点进行计算
+            double referenceLat, referenceLon;
+            if (distanceToMid < haversineDistance(midLat, midLon, startLat, startLon)) {
+                referenceLat = startLat;
+                referenceLon = startLon;
+            } else {
+                referenceLat = endLat;
+                referenceLon = endLon;
+            }
+
+            // 计算当前点位到选定参考点的距离
+            double distanceToReference = haversineDistance(referenceLat, referenceLon, currentLat, currentLon);
 
             // 更新最大完成量和完成率
+            double completionAmountKm = Math.min(distanceToReference, totalLengthKm);
             maxCompletionAmountKm = Math.max(maxCompletionAmountKm, completionAmountKm);
-            maxCompletionRate = Math.max(maxCompletionRate, completionRate);
+            maxCompletionRate = Math.max(maxCompletionRate, (completionAmountKm / totalLengthKm) * 100);
 
             // 添加完成的管段点位信息
             completedSegments.add(new Segment(currentLat, currentLon, completionAmountKm));
+
         }
 
         // 确保最终完成率不超过100%
         maxCompletionRate = Math.min(maxCompletionRate, 100.0);
 
+
+        // 创建并返回完成结果对象
         return new CompletionResult(maxCompletionAmountKm, maxCompletionRate, completedSegments);
     }
+
 
     // 完整的哈弗辛公式
     private static double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
