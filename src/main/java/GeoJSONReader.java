@@ -34,7 +34,7 @@ public class GeoJSONReader {
         FeatureJSON fJson_15 = new FeatureJSON(new GeometryJSON(15));
 
         // 读取为FeatureCollection
-        FeatureCollection<SimpleFeatureType,SimpleFeature> featureCollection =
+        FeatureCollection featureCollection =
                 fJson_15.readFeatureCollection(json);
 
         // 遍历FeatureCollection，打印每个Feature的信息
@@ -82,6 +82,7 @@ public class GeoJSONReader {
                         pointCounts.put(category, pointCounts.getOrDefault(category, 0) + 1);
                     } else if (geometry.getGeometryType().equalsIgnoreCase("LineString")) { // 统计线的长度
                         double length = geometry.getLength();
+                        System.out.println(length);
                         Geometry intersection = geometry.intersection(polygon);
                         double l = intersection.getLength();
                         lineLengths.put(category, lineLengths.getOrDefault(category, 0.0) + l);
